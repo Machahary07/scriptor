@@ -59,5 +59,7 @@ export function parseGcode(text: string): Parsed {
     }
     cmds.push(cmd);
   });
-  return { cmds, unknown, comments, lineCount: lines.length };
+  // A trailing newline does not start another line.
+  const lineCount = lines.length - (lines[lines.length - 1] === "" ? 1 : 0);
+  return { cmds, unknown, comments, lineCount };
 }

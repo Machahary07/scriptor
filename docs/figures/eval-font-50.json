@@ -1,0 +1,15 @@
+{
+  "model": "font",
+  "writer": null,
+  "toolpath": {
+    "pages": 50,
+    "valid_pages": 50,
+    "mean_paths": 1367.16,
+    "mean_travel_written_mm": 8491.247299999999,
+    "mean_travel_ordered_mm": 4817.18226,
+    "travel_reduction": 0.43268849795482933,
+    "mean_plot_s": 685.34168,
+    "max_plot_s": 689.286,
+    "mean_pen_share": 0.49876
+  }
+}

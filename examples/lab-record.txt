@@ -1,0 +1,9 @@
+Experiment 4: Verification of Ohm's Law
+
+Aim: To verify Ohm's law by measuring the current through a resistor for different applied voltages.
+
+Apparatus: DC power supply (0-12 V), ammeter, voltmeter, carbon resistor of 47 ohm, rheostat and connecting wires.
+
+[box 40 Fig. 1: Circuit diagram]
+
+Result: The graph of V against I is a straight line through the origin, so Ohm's law is verified.

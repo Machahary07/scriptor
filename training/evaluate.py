@@ -4,7 +4,8 @@
     python training/evaluate.py --model graves --writer <id> --cer  # + legibility (needs an OCR)
 
 Metrics (report, section 13):
-  * toolpath validity: every point inside the sheet, every path non-empty;
+  * toolpath validity: every point inside the sheet (the simulator's full checks run on
+    the files saved with --gcode-dir: cd web && SCRIPTOR_GCODE_DIR=<dir> npx vitest run batch);
   * efficiency: pen-up travel before and after ordering, plot time per page;
   * legibility (--cer): character error rate of an OCR reading of each rendered line.
     The OCR is TrOCR [ref 20] through the `transformers` package if installed, or any
@@ -90,13 +91,16 @@ def make_ocr():
     return ocr
 
 
-def toolpath_metrics(model: str, style, pages: int, bias: float) -> dict:
+def toolpath_metrics(model: str, style, pages: int, bias: float, gcode_dir: Path | None = None) -> dict:
     spec = PageSpec()
     rows, invalid = [], 0
     text = " ".join(SENTENCES * 3)
     for seed in range(pages):
         page = generate_strokes(text, style, model, bias, seed, spec)[0]
-        res = make_gcode(page.paths, spec.height)
+        res = make_gcode(page.paths, spec.height, f"eval seed={seed}")
+        if gcode_dir:
+            gcode_dir.mkdir(parents=True, exist_ok=True)
+            (gcode_dir / f"page{seed:03d}.gcode").write_text(res.gcode)
         pts = np.concatenate(res.paths)
         if (pts < 0).any() or (pts[:, 0] > spec.width).any() or (pts[:, 1] > spec.height).any():
             invalid += 1
@@ -138,10 +142,11 @@ def main(argv=None):
     ap.add_argument("--pages", type=int, default=50)
     ap.add_argument("--cer", action="store_true")
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--gcode-dir", type=Path, default=None, help="also save each page's G-code here, for the simulator checks")
     a = ap.parse_args(argv)
 
     style = store.load_style(a.writer)
-    res = {"model": a.model, "writer": a.writer, "toolpath": toolpath_metrics(a.model, style, a.pages, a.bias)}
+    res = {"model": a.model, "writer": a.writer, "toolpath": toolpath_metrics(a.model, style, a.pages, a.bias, a.gcode_dir)}
     if a.cer:
         ocr = make_ocr()
         if ocr is None:

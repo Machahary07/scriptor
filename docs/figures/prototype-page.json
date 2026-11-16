@@ -1,0 +1,63 @@
+{
+  "written": {
+    "paths": 547,
+    "draw_mm": 4629.177,
+    "travel_mm": 3046.268,
+    "draw_s": 92.584,
+    "travel_s": 36.555,
+    "pen_s": 136.75,
+    "total_s": 265.889,
+    "pen_share": 0.514,
+    "travel_mm_written_order": 3046.268,
+    "total_s_written_order": 265.889,
+    "paths_before_join": 547,
+    "points": 4732,
+    "gcode_lines": 6926
+  },
+  "ordered": {
+    "paths": 547,
+    "draw_mm": 4629.177,
+    "travel_mm": 1987.158,
+    "draw_s": 92.584,
+    "travel_s": 23.846,
+    "pen_s": 136.75,
+    "total_s": 253.179,
+    "pen_share": 0.54,
+    "travel_mm_written_order": 3046.268,
+    "total_s_written_order": 265.889,
+    "paths_before_join": 547,
+    "points": 4732,
+    "gcode_lines": 6926
+  },
+  "joined": {
+    "paths": 410,
+    "draw_mm": 4635.277,
+    "travel_mm": 2030.548,
+    "draw_s": 92.706,
+    "travel_s": 24.367,
+    "pen_s": 102.5,
+    "total_s": 219.572,
+    "pen_share": 0.467,
+    "travel_mm_written_order": 3033.206,
+    "total_s_written_order": 231.604,
+    "paths_before_join": 547,
+    "points": 4583,
+    "gcode_lines": 6230
+  },
+  "gcode_head": [
+    "; scriptor job=report page=1/1",
+    "G21 ; mm",
+    "G90 ; absolute",
+    "M5 ; pen up",
+    "G0 X0 Y0",
+    "G0 X20.00 Y113.39 F5000",
+    "M3 S90 ; pen down",
+    "G4 P0.15",
+    "G1 X20.72 Y114.53 F3000",
+    "G1 X20.19 Y112.41 F3000",
+    "G1 X20.31 Y112.07 F3000",
+    "G1 X20.66 Y111.98 F3000",
+    "G1 X21.69 Y112.38 F3000",
+    "G1 X22.13 Y112.80 F3000"
+  ]
+}

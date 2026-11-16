@@ -45,9 +45,9 @@ class LinearLSTMCell(nn.Module):
 class StyleEncoder(nn.Module):
     """Turns a writer's reference strokes into a fixed-size style vector."""
 
-    def __init__(self, style_dim: int = 64, hid: int = 128):
+    def __init__(self, style_dim: int = 128, hid: int = 128):
         super().__init__()
-        self.rnn = nn.GRU(3, hid, batch_first=True, bidirectional=True)
+        self.rnn = nn.LSTM(3, hid, batch_first=True, bidirectional=True)
         self.out = nn.Linear(2 * hid, style_dim)
 
     def forward(self, ref: torch.Tensor, ref_mask: torch.Tensor) -> torch.Tensor:
@@ -58,7 +58,7 @@ class StyleEncoder(nn.Module):
 
 
 class GravesNet(nn.Module):
-    def __init__(self, hidden: int = 400, n_window: int = 10, n_mix: int = 20, style_dim: int = 64):
+    def __init__(self, hidden: int = 400, n_window: int = 10, n_mix: int = 20, style_dim: int = 128):
         super().__init__()
         self.config = dict(hidden=hidden, n_window=n_window, n_mix=n_mix, style_dim=style_dim)
         H, K, V, S = hidden, n_window, VOCAB_SIZE, style_dim
