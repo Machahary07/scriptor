@@ -1,0 +1,9 @@
+[project]
+name = "scriptor"
+version = "0.1.0"
+description = "AI handwriting synthesis with a virtual pen-plotter simulator"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: trains a tiny model (about a minute on CPU)"]

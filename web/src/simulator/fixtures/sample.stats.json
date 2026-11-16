@@ -1,0 +1,17 @@
+[
+  {
+    "paths": 83,
+    "draw_mm": 981.319,
+    "travel_mm": 922.07,
+    "draw_s": 19.626,
+    "travel_s": 11.065,
+    "pen_s": 20.75,
+    "total_s": 51.441,
+    "pen_share": 0.403,
+    "travel_mm_written_order": 969.836,
+    "total_s_written_order": 52.014,
+    "paths_before_join": 117,
+    "points": 1072,
+    "gcode_lines": 1411
+  }
+]

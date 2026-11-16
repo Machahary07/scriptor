@@ -1,0 +1,13 @@
+Experiment 4: Verification of Ohm's Law
+
+Aim: To verify Ohm's law by measuring the current through a resistor for different applied voltages and to find its resistance from the slope of the V-I graph.
+
+Apparatus: DC power supply (0-12 V), ammeter (0-500 mA), voltmeter (0-15 V), carbon resistor of nominal value 47 ohm, rheostat, connecting wires and a key.
+
+[box 40 Fig. 1: Circuit diagram]
+
+Theory: Ohm's law states that the current through a conductor is directly proportional to the potential difference across it, provided the temperature and other physical conditions remain unchanged. Thus V = IR, where R is the resistance of the conductor.
+
+Procedure: The circuit was connected as shown in the figure. The rheostat was adjusted to give a small current and the readings of the ammeter and voltmeter were noted. The voltage was increased in steps of one volt and the readings were recorded each time. A graph of V against I was then plotted.
+
+Result: The graph is a straight line through the origin, so Ohm's law is verified. The resistance found from the slope is 46.2 ohm, within 2% of the nominal value.
