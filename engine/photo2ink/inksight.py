@@ -25,6 +25,7 @@ PROMPT = "Recognize and derender."
 FALLBACK_PROMPT = "Derender the ink."  # used when the first answer has no strokes
 CANVAS = 224
 _TOKEN = re.compile(r"<ink_token_(\d+)>")
+_SPECIAL = re.compile(r"<[^<>\s]+>")  # ink tokens and sentinels such as <extra_id_0>
 
 
 def configure_tf() -> None:
@@ -54,7 +55,7 @@ def text_to_tokens(text: str) -> list[int]:
 
 def recognised_text(text: str) -> str:
     """The words InkSight read, i.e. its output without the ink tokens."""
-    return " ".join(_TOKEN.sub(" ", text).split())
+    return " ".join(_SPECIAL.sub(" ", text).split())
 
 
 def detokenize(tokens: list[int]) -> list[np.ndarray]:

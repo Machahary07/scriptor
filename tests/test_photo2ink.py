@@ -12,7 +12,7 @@ from engine.photo2ink.page import clean_page
 
 
 def test_detokenize_strokes_and_text():
-    out = "hello <ink_token_450> <ink_token_10> <ink_token_245> <ink_token_11> <ink_token_246> " \
+    out = "<extra_id_0> hello <ink_token_450> <ink_token_10> <ink_token_245> <ink_token_11> <ink_token_246> " \
           "<ink_token_450> <ink_token_5> <ink_token_230> <ink_token_7>"
     strokes = detokenize(text_to_tokens(out))
     assert [s.tolist() for s in strokes] == [[[10, 20], [11, 21]], [[5, 5]]]  # trailing x without y is skipped
