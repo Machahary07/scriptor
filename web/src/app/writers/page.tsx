@@ -93,10 +93,17 @@ export default function WritersPage() {
 
   return (
     <div className="page">
+      <header className="page-head">
+        <div>
+          <span className="kicker">the writers</span>
+          <h1>Lend us <em>your hand.</em></h1>
+          <p>Copy a few sentences on screen with a stylus, finger or mouse. Scriptor measures your slant, width and rhythm.</p>
+        </div>
+      </header>
       <div className="split">
         <div className="stack">
           <div className="card stack">
-            <h2>New writer</h2>
+            <div className="step-label"><span className="n">1</span><h2>New writer</h2></div>
             <label className="field">
               Name
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Neelashree" />
@@ -141,17 +148,25 @@ export default function WritersPage() {
           {error && <div className="error">{error}</div>}
           {msg && <div className="okbox">{msg}</div>}
           {!w ? (
-            <div className="card empty">Register a writer to start recording samples.</div>
+            <div className="card empty-hero">
+              <span className="hand-note">← start by registering a writer</span>
+              <svg viewBox="0 0 520 120" fill="none" strokeLinecap="round" aria-hidden>
+                <path d="M10 95h500" stroke="var(--rule)" strokeWidth="2" />
+                <path className="draw" d="M20 80c18-4 22-50 40-50s4 50 22 50 16-34 28-34 6 20 14 20 12-26 22-26 10 30 24 30 14-40 30-40 8 40 20 40 18-22 30-22 10 22 24 22 22-30 36-30 8 30 22 30 30-18 52-22" stroke="var(--ink)" strokeWidth="3" />
+              </svg>
+              <p className="note">Then copy 10 to 20 sentences here with a stylus, finger or mouse.</p>
+            </div>
           ) : (
             <>
               <div className="card stack">
                 <div className="card-head" style={{ marginBottom: 0 }}>
                   <div>
-                    <h2>Record handwriting · {w.name}</h2>
-                    <p className="note">Write the sentence on the lines with a stylus, finger or mouse. 10 to 20 lines give the best style.</p>
+                    <div className="step-label"><span className="n">2</span><h2>Record handwriting · {w.name}</h2></div>
+                    <p className="note" style={{ marginTop: 6 }}>10 to 20 lines give the best style.</p>
                   </div>
                   <span className="badge">{w.samples} / 20 lines</span>
                 </div>
+                <div className="progress"><span style={{ width: `${Math.min(100, (w.samples / 20) * 100)}%` }} /></div>
                 <div className="prompt">{PROMPTS[prompt]}</div>
                 <CaptureCanvas ref={cap} onChange={setStrokes} />
                 <div className="row">
@@ -190,7 +205,7 @@ export default function WritersPage() {
               </div>
 
               <div className="card stack">
-                <h2>Style</h2>
+                <div className="step-label"><span className="n">3</span><h2>Style</h2></div>
                 {w.style ? (
                   <div className="stats">
                     <div className="stat"><div className="k">Slant</div><div className="v">{(Math.abs(w.style.slant) < 1e-3 ? 0 : (w.style.slant * 180) / Math.PI).toFixed(1)}°</div></div>

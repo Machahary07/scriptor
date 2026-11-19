@@ -1,0 +1,17 @@
+Experiment 1: Linear search with execution time
+
+Aim: To search for an element in an array using linear search and to measure the execution time.
+
+Algorithm: Linear_Search (a, n, x)
+1. Start
+2. For i = 0 to (n - 1) do
+3. If x == a[i] then print "Element found" and exit
+4. If (i == n) then print "Element not found"
+5. Stop
+
+Output: Enter no. of elements: 6
+Enter element to search: 45
+Element found at position: 3
+Execution time = 0.000008 seconds
+
+Result: Linear search was implemented and its time complexity is T(n) = O(n).

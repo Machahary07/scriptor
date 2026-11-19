@@ -24,16 +24,14 @@ export function Nav() {
   return (
     <header className="topbar">
       <Link href="/" className="brand">
-        <span className="brand-mark">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a0d04" strokeWidth="2.4" strokeLinecap="round">
-            <path d="M3 17c3-1 4-9 7-9s1 8 4 8 3-6 5-6 1 3 2 3" />
-          </svg>
-        </span>
-        Scriptor
+        <span className="brand-word">Script<i>or</i></span>
+        <span className="brand-tag">writes like you</span>
       </Link>
       <nav className="nav">
-        {LINKS.map((l) => (
-          <Link key={l.href} href={l.href} className={path === l.href ? "active" : ""}>{l.label}</Link>
+        {LINKS.map((l, i) => (
+          <Link key={l.href} href={l.href} className={path === l.href ? "active" : ""}>
+            <span className="num">0{i + 1}</span>{l.label}
+          </Link>
         ))}
       </nav>
       <div className="engine-status" title="Python engine at /api">
