@@ -82,6 +82,38 @@ Training needs a GPU; free Google Colab is enough.
 To check the training loop on a laptop without IAM-OnDB:
 `python training/pretrain.py --synthetic 400 --epochs 3 --hidden 64`.
 
+## Notes → model
+
+Learns your handwriting from phone photos of handwritten pages, on free Colab (T4), in one notebook:
+[`notebooks/notes_to_model.ipynb`](notebooks/notes_to_model.ipynb).
+
+1. Photograph 10 or more pages: from straight above, good light, no shadow, one page per photo.
+2. Either put the photos in a Google Drive folder named `scriptor_photos`, or keep them on your laptop and pick them when cell 2 asks.
+3. Open [Colab](https://colab.research.google.com) → File → Open notebook → GitHub → `Machahary07/scriptor`,
+   branch `notes-to-model` (or `main` after merge) → `notebooks/notes_to_model.ipynb`.
+4. Runtime → Change runtime type → **T4 GPU**.
+5. Run the cells in order. Allow Google Drive access when asked.
+6. If cell 3 (InkSight setup) fails, set `INK_PINS = "card"` in that cell and run it again. It stops after 20 minutes and prints the exact error; it never fakes strokes.
+7. Look at the previews printed by cell 4 (photo vs recovered strokes). Every word and the reason it was kept or flagged is in `photo2ink/words.json`.
+8. Outputs land in `MyDrive/Scriptor/notes_run/`: `loss_curve.png`, `generated_bias0.png`, `generated_bias2.png`,
+   `generated_bias*.gcode` (load them in the Simulator page), `run_summary.json`, `graves_base.pt`, `adapter.pt`.
+
+What happens:
+
+| Step | Code | Notes |
+| --- | --- | --- |
+| Clean pages | `engine/photo2ink/page.py` | crop to paper, deskew (projection profile), contrast, adaptive binarisation |
+| Find and read words | docTR (free, local) | word boxes, text and confidence |
+| Word image → strokes | `engine/photo2ink/inksight.py` | Google InkSight Small-p, in its own TensorFlow environment (`setup_env.sh`) |
+| Check and group | `engine/photo2ink/layout.py` | a word is kept when its strokes cover its ink (F1 ≥ 0.3) and its text is trusted (docTR confident, or docTR and InkSight agree); words → lines; noisy lines dropped |
+| Dataset | `training/notes_dataset.py` | repo preprocessing → stroke-3; 90/10 split by line; 3 jittered copies (scale, slant, rotation) of each training line |
+| Stage A | `training/notes_train.py` | LSTM-MDN from scratch, 15 min, Adam 1e-3, clip 10 |
+| Stage B | same | base frozen, LoRA r=8 on LSTM gates, attention window and output head, 10 min, Adam 5e-4, original lines only |
+| Output | `engine/planner.py`, `engine/pipeline.py` | lines at bias 0 and 2 → PNG and G-code |
+
+Without IAM-OnDB the base model only sees your own notes, so expect rough output after 25 minutes.
+For readable text, pre-train stage A on IAM-OnDB (above) and use the notes only for the adapter.
+
 ## Tests
 
 ```bash
