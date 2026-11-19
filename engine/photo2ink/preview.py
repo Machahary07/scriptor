@@ -6,7 +6,11 @@ last = red). Word boxes are green when the word was kept and red when flagged.
 
 from __future__ import annotations
 
-import matplotlib
+import os
+
+# A notebook kernel exports its inline backend, which this separate environment does not have.
+os.environ["MPLBACKEND"] = "Agg"
+import matplotlib  # noqa: E402
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
