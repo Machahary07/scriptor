@@ -7,15 +7,27 @@ import { TimeBar } from "@/components/TimeBar";
 import { api, type ModelInfo, type Writer } from "@/lib/api";
 import { download, fmtMm, fmtTime, useJob } from "@/lib/job-store";
 
-const SAMPLE = `Experiment 4: Verification of Ohm's Law
+const SAMPLE = `Experiment 1: Linear search with execution time
 
-Aim: To verify Ohm's law by measuring the current through a resistor for different applied voltages.
+Aim: To search for an element in an array using linear search and to measure the execution time.
 
-Apparatus: DC power supply (0-12 V), ammeter, voltmeter, carbon resistor of 47 ohm, rheostat and connecting wires.
+Algorithm: Linear_Search (a, n, x)
+1. Start
+2. For i = 0 to (n - 1) do
+3. If x == a[i] then print "Element found" and exit
+4. If (i == n) then print "Element not found"
+5. Stop
 
-[box 40 Fig. 1: Circuit diagram]
+Output: Element found at position: 3
+Execution time = 0.000008 seconds
 
-Result: The graph of V against I is a straight line through the origin, so Ohm's law is verified.`;
+Result: Linear search was implemented and its time complexity is T(n) = O(n).`;
+
+const MODEL_NEEDS: Record<string, string> = {
+  graves: "Needs trained weights (Colab, IAM-OnDB)",
+  sdt: "Needs the SDT command configured",
+  diffink: "Needs a GPU and DiffInk configured",
+};
 
 export default function Studio() {
   const { job, setJob } = useJob();
@@ -66,39 +78,33 @@ export default function Studio() {
 
   return (
     <div className="page">
+      <header className="page-head">
+        <div>
+          <span className="kicker">the studio</span>
+          <h1>Type it. <em>We&rsquo;ll write it.</em></h1>
+          <p>Any text, written stroke by stroke in a chosen hand, turned into G-code a pen plotter can follow.</p>
+        </div>
+      </header>
       <div className="split">
         <div className="stack">
           <div className="card stack">
             <div className="card-head" style={{ marginBottom: 0 }}>
-              <h2>Write a page</h2>
+              <div className="step-label"><span className="n">1</span><h2>Write a page</h2></div>
               <span className="note">{text.length} characters</span>
             </div>
             <textarea value={text} onChange={(e) => setText(e.target.value)} spellCheck />
             <p className="note">
               A line like <code>[box 40 Fig. 1: caption]</code> reserves a 40 mm box for a diagram.
             </p>
-            <div className="grid2">
-              <label className="field">
-                Writer
-                <select value={writer} onChange={(e) => setWriter(e.target.value)}>
-                  <option value="">Default style</option>
-                  {writers.map((w) => (
-                    <option key={w.id} value={w.id}>{w.name}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="field">
-                Model
-                <select value={model} onChange={(e) => setModel(e.target.value)}>
-                  {models.map((m) => (
-                    <option key={m.name} value={m.name} disabled={!m.available}>
-                      {m.label}{m.available ? "" : " (unavailable)"}
-                    </option>
-                  ))}
-                  {!models.length && <option value="font">Varied single-stroke font</option>}
-                </select>
-              </label>
-            </div>
+            <label className="field">
+              Writer
+              <select value={writer} onChange={(e) => setWriter(e.target.value)}>
+                <option value="">Default style</option>
+                {writers.map((w) => (
+                  <option key={w.id} value={w.id}>{w.name}</option>
+                ))}
+              </select>
+            </label>
             <label className="field">
               Neatness (bias {bias.toFixed(1)}): {bias < 0.6 ? "loose" : bias < 2 ? "natural" : "very neat"}
               <input type="range" min={0} max={4} step={0.1} value={bias} onChange={(e) => setBias(+e.target.value)} />
@@ -127,31 +133,51 @@ export default function Studio() {
               <span>Join touching strokes so the pen stays down within letters</span>
             </label>
             {error && <div className="error">{error}</div>}
-            <button className="primary" onClick={run} disabled={busy || !text.trim()}>
-              {busy ? "Writing…" : "Generate handwriting"}
+            <button className="primary big" onClick={run} disabled={busy || !text.trim()}>
+              {busy ? "Writing…" : "Generate handwriting →"}
             </button>
           </div>
           {models.length > 0 && (
-            <div className="card stack" style={{ gap: 8 }}>
-              <h3>Models</h3>
-              {models.map((m) => (
-                <div key={m.name} className="row" style={{ justifyContent: "space-between", flexWrap: "nowrap" }}>
-                  <div>
-                    <div>{m.label}</div>
-                    <div className="note">{m.available ? m.description : m.status}</div>
-                  </div>
-                  <span className={`badge ${m.available ? "ok" : "warn"}`}>{m.available ? "ready" : "not ready"}</span>
-                </div>
-              ))}
+            <div className="card stack" style={{ gap: 12 }}>
+              <div className="card-head" style={{ marginBottom: 0 }}>
+                <h2>Handwriting model</h2>
+                <span className="note">{models.filter((m) => m.available).length} of {models.length} ready</span>
+              </div>
+              <div className="models">
+                {models.map((m, i) => (
+                  <button
+                    key={m.name}
+                    className={`model ${m.name === model ? "on" : ""}`}
+                    disabled={!m.available}
+                    onClick={() => setModel(m.name)}
+                    title={m.available ? m.description : m.status}
+                  >
+                    <span className="model-glyph">{["Aa", "Ψ", "✦", "≈"][i % 4]}</span>
+                    <span className="model-body">
+                      <span className="model-name">{m.label}</span>
+                      <span className="model-desc">{m.available ? m.description.split(".")[0] : MODEL_NEEDS[m.name] ?? "Not installed"}</span>
+                    </span>
+                    <span className={`model-state ${m.available ? "ok" : ""}`}>{m.available ? (m.name === model ? "In use" : "Ready") : "Locked"}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
 
         <div className="stack">
           {!job || !cur || !s ? (
-            <div className="card empty">
-              <h2 style={{ marginBottom: 6 }}>No page yet</h2>
-              <p>Type some text and press Generate. The page appears here with its toolpath statistics.</p>
+            <div className="card" style={{ padding: 36 }}>
+              <div className="blank-sheet">
+                <div className="hint">
+                  <span>Your page appears here,</span>
+                  <span>written stroke by stroke</span>
+                  <span>— press Generate.</span>
+                </div>
+                <svg viewBox="0 0 200 80" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                  <path d="M5 60c20-5 25-45 45-45s5 45 25 45 18-30 30-30 6 18 14 18 12-22 22-22 10 26 22 26 14-10 32-14" />
+                </svg>
+              </div>
             </div>
           ) : (
             <>
@@ -172,8 +198,8 @@ export default function Studio() {
                         ))}
                       </div>
                     )}
-                    <Link className="btn primary" href={`/simulator?page=${page}`} style={{ background: "var(--accent)", color: "#1a0d04", borderColor: "var(--accent)" }}>
-                      Open in simulator
+                    <Link className="btn primary" href={`/simulator?page=${page}`}>
+                      Open in simulator →
                     </Link>
                   </div>
                 </div>

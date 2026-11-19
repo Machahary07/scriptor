@@ -6,7 +6,7 @@ export function TimeBar({ draw, travel, pen }: { draw: number; travel: number; p
   const parts = [
     { k: "Drawing", v: draw, c: "var(--ink)" },
     { k: "Travel", v: travel, c: "var(--accent)" },
-    { k: "Pen lifts", v: pen, c: "var(--warn)" },
+    { k: "Pen lifts", v: pen, c: "#e7b25c" },
   ];
   return (
     <div className="stack" style={{ gap: 8 }}>
