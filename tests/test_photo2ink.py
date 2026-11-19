@@ -140,3 +140,25 @@ def test_timeboxed_stages_and_lora(samples_json, tmp_path):
                         log=lambda *_: None, t_offset=a["wall_s"] / 60)
     assert abs(b["initial_val"] - a["final_val"]) < 1e-4  # LoRA starts exactly at the base model
     assert b["history"][0]["t_min"] == pytest.approx(a["wall_s"] / 60, abs=1e-3)
+
+
+def test_trace_photo_without_a_model():
+    from engine.photo2ink.trace import chain, clean_ink, thin, trace
+
+    img = Image.new("L", (300, 120), 0)
+    d = ImageDraw.Draw(img)
+    d.line([(30, 60), (150, 60)], fill=255, width=5)  # a "T": crossing strokes
+    d.line([(90, 30), (90, 100)], fill=255, width=5)
+    d.ellipse((200, 55, 205, 60), fill=255)  # a dot
+    ink = np.asarray(img) > 0
+    ink[2, :] = True  # touches the border: dropped
+    clean = clean_ink(ink)
+    assert not clean[2].any() and clean[60, 100]
+    skel = thin(clean)
+    assert skel.sum() < clean.sum() / 3
+    lines = trace(skel)
+    assert len(lines) <= 4  # the T needs at least two pen paths; plus the dot
+    xs = np.concatenate([l[:, 0] for l in lines])
+    assert xs.min() < 40 and xs.max() > 195
+    assert chain([[(0, 0), (0, 1)], [(0, 1), (0, 2)]]) == [[(0, 2), (0, 1), (0, 0)]] or \
+        chain([[(0, 0), (0, 1)], [(0, 1), (0, 2)]]) == [[(0, 0), (0, 1), (0, 2)]]
